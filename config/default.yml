@@ -1,0 +1,64 @@
+# ╔══════════════════════════════════════════════════════╗
+# ║              Searchboxarr Configuration              ║
+# ║   All values can be overridden via environment vars  ║
+# ╚══════════════════════════════════════════════════════╝
+
+server:
+  # Port the app listens on (env: SEARCHARR_PORT)
+  port: 9797
+  # Base URL prefix if running behind a reverse proxy (env: SEARCHARR_BASE_URL)
+  baseUrl: /
+  # Trust X-Forwarded-For headers (set true behind nginx/traefik) (env: TRUST_PROXY)
+  trustProxy: false
+
+prowlarr:
+  # Prowlarr instance URL (env: PROWLARR_URL)
+  url: http://prowlarr:9696
+  # Prowlarr API key (env: PROWLARR_API_KEY) — REQUIRED
+  apiKey: ""
+  # Request timeout in milliseconds (env: PROWLARR_TIMEOUT)
+  timeout: 30000
+
+cache:
+  # Enable in-memory result caching (env: CACHE_ENABLED)
+  enabled: true
+  # Default cache TTL in seconds (env: CACHE_TTL)
+  ttl: 300
+  # Max cached entries (env: CACHE_MAX_SIZE)
+  maxSize: 500
+  # TTL for search results specifically (env: CACHE_SEARCH_TTL)
+  searchTtl: 120
+  # TTL for indexer list (env: CACHE_INDEXERS_TTL)
+  indexersTtl: 600
+
+rateLimit:
+  # Enable per-IP rate limiting (env: RATE_LIMIT_ENABLED)
+  enabled: true
+  # Time window in milliseconds (env: RATE_LIMIT_WINDOW_MS)
+  windowMs: 60000
+  # Max requests per window per IP (env: RATE_LIMIT_MAX)
+  max: 60
+  # Skip counting successful responses (env: RATE_LIMIT_SKIP_SUCCESS)
+  skipSuccessfulRequests: false
+
+auth:
+  # Enable HTTP Basic Auth (env: AUTH_ENABLED)
+  enabled: false
+  # Username (env: AUTH_USERNAME)
+  username: searchboxarr
+  # Password (env: AUTH_PASSWORD)
+  password: ""
+
+search:
+  # Results per page shown in UI (env: RESULTS_PER_PAGE)
+  resultsPerPage: 25
+  # Maximum results fetched from Prowlarr per query (env: MAX_RESULTS)
+  maxResults: 100
+  # Default category IDs to pre-select (empty = All)
+  defaultCategories: []
+
+logging:
+  # Log level: error, warn, info, http, debug (env: LOG_LEVEL)
+  level: info
+  # Morgan HTTP format: combined, common, short, tiny (env: LOG_FORMAT)
+  format: short
