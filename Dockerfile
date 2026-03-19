@@ -62,7 +62,9 @@ RUN mkdir -p /config && chown 1001:1001 /config
 ENV NODE_ENV=production \
     LOG_LEVEL=info \
     LOG_FORMAT=short \
-    CONFIG_PATH=/config/config.yml
+    CONFIG_PATH=/config/config.yml \
+    TRUST_PROXY=false
+
     
     ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
     
