@@ -34,9 +34,11 @@ LABEL org.opencontainers.image.title="Searchboxarr" \
       org.opencontainers.image.source="https://github.com/yourorg/searchboxarr" \
       org.opencontainers.image.licenses="MIT"
 
+RUN apk add --no-cache su-exec
 # Create non-root user following Linuxserver pattern
 RUN addgroup -g 1001 searchboxarr && \
     adduser -u 1001 -G searchboxarr -s /bin/sh -D searchboxarr
+    
 
 WORKDIR /app
 COPY defaults/config.yml ./defaults/config.yml
@@ -81,18 +83,16 @@ ENV NODE_ENV=production \
     CONFIG_PATH=/config/config.yml \
     TRUST_PROXY=false
 
-# Health check
-
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-
-
+    
+    ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+    
+    
+    # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
   CMD wget -qO- http://localhost:${SEARCHARR_PORT}/api/health || exit 1
 
 EXPOSE 9797
 
 VOLUME ["/config"]
-
-USER searchboxarr
 
 CMD ["node", "backend/dist/index.js"]
