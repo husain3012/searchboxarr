@@ -32,23 +32,26 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
 
-      # The following steps only run if a new release was actually created
+      # Only run the following steps if a new release was actually published
       - name: Log in to Docker Hub
+        if: steps.semantic.outputs.new_release_published == 'true'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Extract Docker metadata
+        if: steps.semantic.outputs.new_release_published == 'true'
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ secrets.DOCKERHUB_USERNAME }}/searchboxarr
           tags: |
-            type=semver,pattern={{version}}
-            type=latest
+            type=raw,value=latest
+            type=raw,value=${{ steps.semantic.outputs.new_release_version }}
 
       - name: Build and push Docker image
+        if: steps.semantic.outputs.new_release_published == 'true'
         uses: docker/build-push-action@v5
         with:
           context: .

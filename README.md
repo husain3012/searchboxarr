@@ -30,7 +30,7 @@
 
 ```bash
 # 1. Clone / download the project
-git clone https://github.com/yourorg/searchboxarr
+git clone https://github.com/husain3012/searchboxarr
 cd searchboxarr
 
 # 2. Configure
