@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/husain3012/searchboxarr/compare/v1.3.1...v1.3.2) (2026-03-19)
+
+### Bug Fixes
+
+- **backend:** create default config if config is absent via docker build ([81e1fe2](https://github.com/husain3012/searchboxarr/commit/81e1fe203a2a69abd6b041090eeca83dcbccf5d1))
+- **backend:** create default config if config is absent via docker build ([#10](https://github.com/husain3012/searchboxarr/issues/10)) ([bd30687](https://github.com/husain3012/searchboxarr/commit/bd30687fe7dc54492f955218624efbac1eb6b88e))
+
 ## [1.3.1](https://github.com/husain3012/searchboxarr/compare/v1.3.0...v1.3.1) (2026-03-19)
 
 ### Bug Fixes
