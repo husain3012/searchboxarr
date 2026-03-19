@@ -177,3 +177,4 @@ sketch
 
 config/config.yml
 !config/config.yml.example
+docker-compose.override.yml

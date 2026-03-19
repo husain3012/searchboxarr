@@ -2,13 +2,17 @@
 
 > **Prowlarr-powered torrent search UI** — A clean, fast, dark-themed search interface inspired by the \*arr stack.
 
-![Searchboxarr](https://img.shields.io/badge/stack-Node.js%20%2B%20React%20%2B%20TypeScript-00d4ff?style=flat-square)
-![Docker](https://img.shields.io/badge/docker-ready-0db7ed?style=flat-square)
-![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
+[![Searchboxarr](https://img.shields.io/badge/stack-Node.js%20%2B%20React%20%2B%20TypeScript-00d4ff?style=flat-square)](https://github.com/husain3012/searchboxarr)
+[![Docker](https://img.shields.io/badge/docker-ready-0db7ed?style=flat-square)](https://hub.docker.com/r/husain3012/searchboxarr)
+[![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](https://github.com/husain3012/searchboxarr/blob/main/LICENSE)
 
----
+## Application Setup
 
-## Features
+Searchboxarr is a lightweight frontend + backend UI for Prowlarr search. It lets you search across all configured indexers, copy magnet links, download .torrent files, and proxy requests securely through the backend.
+
+Access the webui at `<your-ip>:9797`, for more information check out [Searchboxarr](https://github.com/husain3012/searchboxarr).
+
+### Features
 
 - **⚡ Fast search** across all your Prowlarr indexers simultaneously
 - **🧲 Magnet links** — click to open directly in your torrent client
@@ -19,59 +23,142 @@
 - **💾 In-memory caching** — fast repeat searches, configurable TTL
 - **🚦 Rate limiting** — protects your Prowlarr from abuse
 - **🔒 Optional Basic Auth** — lock down public deployments
-- **🐳 Docker-ready** — single container, multi-stage build
+- **🐳 Docker-ready** — multi-stage build, optimized image
 - **⚙️ Config via env vars or YAML** — full \*arr-style configuration
+- **🏥 Health checks** — automatic container monitoring
 
+## Supported Architectures
+
+This image supports x86-64 and arm64 architectures. The correct image will be automatically selected based on your platform when using the `latest` tag.
+
+| Architecture | Available | Tag    |
+| :----------: | :-------: | ------ |
+|    x86-64    |    ✅     | latest |
+|    arm64     |    ✅     | latest |
+
+## Version Tags
+
+|  Tag   | Available | Description           |
+| :----: | :-------: | --------------------- |
+| latest |    ✅     | Latest stable release |
+
+## Usage
+
+To help you get started creating a container from this image you can either use docker-compose or the docker cli.
+
+### docker-compose (recommended)
+
+```yaml
 ---
-
-## Quick Start
-
-### Docker Compose (recommended)
-
-```bash
-# 1. Clone / download the project
-git clone https://github.com/husain3012/searchboxarr
-cd searchboxarr
-
-# 2. Configure
-cp .env.example .env
-nano .env   # Set PROWLARR_API_KEY and PROWLARR_URL
-
-# 3. Start
-docker compose up -d
-
-# 4. Open in browser
-open http://localhost:9797
+services:
+  searchboxarr:
+    image: husain3012/searchboxarr:latest
+    container_name: searchboxarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - PROWLARR_URL=http://prowlarr:9696
+      - PROWLARR_API_KEY=your_api_key_here
+    volumes:
+      - /path/to/searchboxarr/data:/config
+    ports:
+      - 9797:9797
+    restart: unless-stopped
 ```
 
-### Environment Variables
+### docker cli
 
-| Variable                 | Default                | Description                 |
-| ------------------------ | ---------------------- | --------------------------- |
-| `PROWLARR_API_KEY`       | _(required)_           | Your Prowlarr API key       |
-| `PROWLARR_URL`           | `http://prowlarr:9696` | Prowlarr instance URL       |
-| `PROWLARR_TIMEOUT`       | `30000`                | Request timeout (ms)        |
-| `SEARCHBOXARR_HOST_PORT` | `9797`                 | Host port to expose         |
-| `SEARCHARR_BASE_URL`     | `/`                    | Base URL sub-path           |
-| `TRUST_PROXY`            | `false`                | Trust reverse-proxy headers |
-| `CACHE_ENABLED`          | `true`                 | Enable result caching       |
-| `CACHE_TTL`              | `300`                  | Default cache TTL (seconds) |
-| `CACHE_SEARCH_TTL`       | `120`                  | Search result TTL (seconds) |
-| `CACHE_INDEXERS_TTL`     | `600`                  | Indexer list TTL (seconds)  |
-| `CACHE_MAX_SIZE`         | `500`                  | Max cached entries          |
-| `RATE_LIMIT_ENABLED`     | `true`                 | Enable rate limiting        |
-| `RATE_LIMIT_MAX`         | `60`                   | Max requests/min/IP         |
-| `AUTH_ENABLED`           | `false`                | Enable HTTP Basic Auth      |
-| `AUTH_USERNAME`          | `searchboxarr`         | Basic auth username         |
-| `AUTH_PASSWORD`          | ``                     | Basic auth password         |
-| `RESULTS_PER_PAGE`       | `25`                   | Results per page            |
-| `MAX_RESULTS`            | `100`                  | Max results per query       |
-| `LOG_LEVEL`              | `info`                 | Log level                   |
-| `TZ`                     | `UTC`                  | Timezone                    |
+```bash
+docker run -d \
+  --name=searchboxarr \
+  -e PUID=1000 \
+  -e PGID=1000 \
+  -e TZ=Etc/UTC \
+  -e PROWLARR_URL=http://prowlarr:9696 \
+  -e PROWLARR_API_KEY=your_api_key_here \
+  -p 9797:9797 \
+  -v ./config:/config \
+  --restart unless-stopped \
+  husain3012/searchboxarr:latest
+```
 
-### Config File
+## Parameters
 
-You can also configure via `/config/config.yml` (mounted as a volume):
+|                Parameter                | Function                                    |
+| :-------------------------------------: | ------------------------------------------- |
+|             `-p 9797:9797`              | The port for the Searchboxarr web interface |
+|             `-e PUID=1000`              | for UserID - see below for explanation      |
+|             `-e PGID=1000`              | for GroupID - see below for explanation     |
+|             `-e TZ=Etc/UTC`             | specify a timezone to use                   |
+| `-e PROWLARR_URL=http://prowlarr:9696`  | URL of your Prowlarr instance               |
+| `-e PROWLARR_API_KEY=your_api_key_here` | API key for your Prowlarr instance          |
+|              `-v /config`               | Database and searchboxarr configs           |
+
+### Environment variables from files (Docker secrets)
+
+You can set any environment variable from a file by using a special prepend `FILE__`.
+
+As an example:
+
+```bash
+-e FILE__PROWLARR_API_KEY=/run/secrets/prowlarr_api_key
+```
+
+Will set the environment variable `PROWLARR_API_KEY` based on the contents of the `/run/secrets/prowlarr_api_key` file.
+
+### User / Group Identifiers
+
+When using volumes (`-v` flags), permissions issues can arise between the host OS and the container. We avoid this issue by allowing you to specify the user `PUID` and group `PGID`.
+
+Ensure any volume directories on the host are owned by the same user you specify and any permissions issues will vanish like magic.
+
+In this instance `PUID=1000` and `PGID=1000`, to find yours use `id your_user` as below:
+
+```bash
+id your_user
+```
+
+Example output:
+
+```
+uid=1000(your_user) gid=1000(your_user) groups=1000(your_user)
+```
+
+## Configuration
+
+### Required Environment Variables
+
+|      Variable      | Description                                                     |
+| :----------------: | --------------------------------------------------------------- |
+| `PROWLARR_API_KEY` | API key for your Prowlarr instance                              |
+|   `PROWLARR_URL`   | URL of your Prowlarr instance (default: `http://prowlarr:9696`) |
+
+### Optional Environment Variables
+
+|        Variable        | Description                       |    Default     |
+| :--------------------: | --------------------------------- | :------------: |
+|   `PROWLARR_TIMEOUT`   | Request timeout in milliseconds   |    `30000`     |
+|  `SEARCHARR_BASE_URL`  | Base path for reverse proxy       |      `/`       |
+|     `TRUST_PROXY`      | Trust proxy headers               |    `false`     |
+|    `CACHE_ENABLED`     | Enable in-memory caching          |     `true`     |
+|      `CACHE_TTL`       | Cache TTL in seconds              |     `300`      |
+|    `CACHE_MAX_SIZE`    | Maximum cache size                |     `500`      |
+|  `RATE_LIMIT_ENABLED`  | Enable rate limiting              |     `true`     |
+| `RATE_LIMIT_WINDOW_MS` | Rate limit window in milliseconds |    `60000`     |
+|    `RATE_LIMIT_MAX`    | Maximum requests per window       |      `60`      |
+|     `AUTH_ENABLED`     | Enable basic authentication       |    `false`     |
+|    `AUTH_USERNAME`     | Basic auth username               | `searchboxarr` |
+|    `AUTH_PASSWORD`     | Basic auth password               |       ``       |
+|   `RESULTS_PER_PAGE`   | Results per page                  |      `25`      |
+|     `MAX_RESULTS`      | Maximum total results             |     `100`      |
+|      `LOG_LEVEL`       | Logging level                     |     `info`     |
+|      `LOG_FORMAT`      | Log format                        |    `short`     |
+|          `TZ`          | Timezone                          |     `UTC`      |
+
+### Configuration File
+
+You can mount a YAML config file at `/config/config.yml`:
 
 ```yaml
 prowlarr:
@@ -87,71 +174,99 @@ rateLimit:
   max: 120
 ```
 
-Environment variables always take priority over the config file.
-
----
-
-## Reverse Proxy
-
-### Nginx
-
-```nginx
-location /searchboxarr/ {
-    proxy_pass http://localhost:9797/;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Host $host;
-}
-```
-
-Set `SEARCHARR_BASE_URL=/searchboxarr` and `TRUST_PROXY=true`.
-
-### Traefik
-
-```yaml
-labels:
-  - "traefik.enable=true"
-  - "traefik.http.routers.searchboxarr.rule=Host(`search.example.com`)"
-  - "traefik.http.services.searchboxarr.loadbalancer.server.port=9797"
-```
-
----
-
-## Joining an Existing \*arr Network
-
-If your Prowlarr runs in a Docker network (e.g. `arr_network`):
-
-```yaml
-# docker-compose.yml
-services:
-  searchboxarr:
-    networks:
-      - arr_network
-      - searchboxarr_net
-
-networks:
-  arr_network:
-    external: true
-    name: arr_network
-```
-
-Then set `PROWLARR_URL=http://prowlarr:9696`.
-
----
-
 ## API Reference
 
-| Endpoint                                         | Description                |
-| ------------------------------------------------ | -------------------------- |
-| `GET /api/search?query=...`                      | Search torrents            |
-| `GET /api/search?query=...&categories=2000,5000` | Filtered search            |
-| `GET /api/search?query=...&indexerIds=1,2`       | Specific indexers          |
-| `GET /api/search/download?url=...&filename=...`  | Download .torrent          |
-| `GET /api/indexers`                              | List enabled indexers      |
-| `GET /api/health`                                | Health check + cache stats |
-| `GET /api/config/public`                         | Public configuration       |
-| `DELETE /api/cache`                              | Flush cache                |
+|        Endpoint         | Method | Description                |
+| :---------------------: | :----: | -------------------------- |
+| `/api/search?query=...` |  GET   | Search for torrents        |
+|     `/api/indexers`     |  GET   | List configured indexers   |
+|      `/api/health`      |  GET   | Health check + cache stats |
+|      `/api/cache`       | DELETE | Flush cache                |
 
----
+## Support Info
+
+### Shell access whilst the container is running
+
+```bash
+docker exec -it searchboxarr /bin/bash
+```
+
+### To monitor the logs of the container in realtime
+
+```bash
+docker logs -f searchboxarr
+```
+
+### Container version number
+
+```bash
+docker inspect -f '{{ index .Config.Labels "build_version" }}' searchboxarr
+```
+
+### Image version number
+
+```bash
+docker inspect -f '{{ index .Config.Labels "build_version" }}' husain3012/searchboxarr:latest
+```
+
+## Updating Info
+
+The container requires an image update and container recreation to update the app inside.
+
+### Via Docker Compose
+
+**Update the image:**
+
+```bash
+docker-compose pull searchboxarr
+```
+
+**Recreate the container:**
+
+```bash
+docker-compose up -d searchboxarr
+```
+
+### Via Docker Run
+
+**Update the image:**
+
+```bash
+docker pull husain3012/searchboxarr:latest
+```
+
+**Stop and remove the current container:**
+
+```bash
+docker stop searchboxarr
+docker rm searchboxarr
+```
+
+**Recreate with the same parameters:**
+
+```bash
+docker run -d \
+  --name=searchboxarr \
+  -e PROWLARR_URL=http://prowlarr:9696 \
+  -e PROWLARR_API_KEY=your_api_key_here \
+  -p 9797:9797 \
+  -v /path/to/searchboxarr/data:/config \
+  --restart unless-stopped \
+  husain3012/searchboxarr:latest
+```
+
+## Building locally
+
+If you want to make local modifications to these images for development purposes or just to customize the logic:
+
+```bash
+git clone https://github.com/husain3012/searchboxarr.git
+cd searchboxarr
+docker build \
+  --no-cache \
+  --pull \
+  -t husain3012/searchboxarr:latest .
+```
 
 ## Development
 
@@ -159,20 +274,20 @@ Then set `PROWLARR_URL=http://prowlarr:9696`.
 # Backend
 cd backend
 npm install
-npm run dev   # starts on :9797
+npm run dev
 
-# Frontend (separate terminal)
+# Frontend
 cd frontend
 npm install
-npm run dev   # starts on :5173, proxies /api → :9797
+npm run dev
 ```
 
----
+## Versions
+
+- **1.0.0:** Initial release
 
 ## License
 
-MIT — See [LICENSE](LICENSE)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
-
-_Searchboxarr is an independent project and is not affiliated with the Prowlarr or \*arr teams._
+> Searchboxarr is independent and not affiliated with Prowlarr or the \*arr teams.
