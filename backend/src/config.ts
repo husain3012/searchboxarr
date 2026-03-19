@@ -7,8 +7,13 @@ const CONFIG_PATH =
   process.env.CONFIG_PATH ||
   path.join(process.cwd(), "..", "config", "config.yml");
 
+const DEFAULT_CONFIG = path.join(process.cwd(), "..", "config", "default.yml");
+
 function loadYamlConfig(): Partial<AppConfig> {
   try {
+    if (!fs.existsSync(CONFIG_PATH)) {
+      fs.copyFileSync(DEFAULT_CONFIG, CONFIG_PATH);
+    }
     if (fs.existsSync(CONFIG_PATH)) {
       const raw = fs.readFileSync(CONFIG_PATH, "utf-8");
       return (yaml.load(raw) as Partial<AppConfig>) || {};
