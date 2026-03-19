@@ -1,3 +1,9 @@
+# [1.2.0](https://github.com/husain3012/searchboxarr/compare/v1.1.0...v1.2.0) (2026-03-19)
+
+### Features
+
+- initial public release of Searchboxarr ([#2](https://github.com/husain3012/searchboxarr/issues/2)) ([01b3a2e](https://github.com/husain3012/searchboxarr/commit/01b3a2e31214079a6414bc43464c7d4f39b6da51))
+
 # [1.1.0](https://github.com/husain3012/searchboxarr/compare/v1.0.1...v1.1.0) (2026-03-19)
 
 ### Features
