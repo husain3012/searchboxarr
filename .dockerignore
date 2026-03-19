@@ -1,0 +1,15 @@
+node_modules
+*/node_modules
+*/*/node_modules
+dist
+*/dist
+.git
+.gitignore
+.env
+*.log
+.DS_Store
+docker-compose.override.yml.example
+docs
+scripts
+README.md
+Makefile

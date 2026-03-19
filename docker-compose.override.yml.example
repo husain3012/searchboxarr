@@ -1,0 +1,17 @@
+---
+# ── docker-compose.override.yml ────────────────────────────
+# Development overrides — hot-reloading via volume mounts
+# Usage: docker compose -f docker-compose.yml -f docker-compose.override.yml up
+#
+# Or just: docker compose up   (auto-merges if this file is present)
+
+services:
+  searchboxarr:
+    build:
+      target: production
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: debug
+      LOG_FORMAT: dev
+      CACHE_ENABLED: "false"
+      RATE_LIMIT_ENABLED: "false"

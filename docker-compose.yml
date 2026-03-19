@@ -1,0 +1,94 @@
+---
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                  Searchboxarr — docker-compose               ║
+# ║                                                              ║
+# ║  Usage:                                                      ║
+# ║    cp .env.example .env          # configure your env vars   ║
+# ║    docker compose up -d          # start the stack           ║
+# ║    docker compose logs -f        # follow logs               ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+services:
+  searchboxarr:
+    image: searchboxarr:latest
+    # Build locally if image not available:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: searchboxarr
+    restart: unless-stopped
+
+    ports:
+      - "${SEARCHBOXARR_HOST_PORT:-9797}:9797"
+
+    volumes:
+      - ./config:/config
+
+    environment:
+      # ── Prowlarr connection ──────────────────────────
+      PROWLARR_URL: ${PROWLARR_URL:-http://prowlarr:9696}
+      PROWLARR_API_KEY: ${PROWLARR_API_KEY:?Please set PROWLARR_API_KEY in .env}
+      PROWLARR_TIMEOUT: ${PROWLARR_TIMEOUT:-30000}
+
+      # ── Server ──────────────────────────────────────
+      SEARCHARR_PORT: 9797
+      SEARCHARR_BASE_URL: ${SEARCHARR_BASE_URL:-/}
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+
+      # ── Cache ────────────────────────────────────────
+      CACHE_ENABLED: ${CACHE_ENABLED:-true}
+      CACHE_TTL: ${CACHE_TTL:-300}
+      CACHE_MAX_SIZE: ${CACHE_MAX_SIZE:-500}
+      CACHE_SEARCH_TTL: ${CACHE_SEARCH_TTL:-120}
+      CACHE_INDEXERS_TTL: ${CACHE_INDEXERS_TTL:-600}
+
+      # ── Rate limiting ────────────────────────────────
+      RATE_LIMIT_ENABLED: ${RATE_LIMIT_ENABLED:-true}
+      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-60000}
+      RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-60}
+
+      # ── Optional auth ────────────────────────────────
+      AUTH_ENABLED: ${AUTH_ENABLED:-false}
+      AUTH_USERNAME: ${AUTH_USERNAME:-searchboxarr}
+      AUTH_PASSWORD: ${AUTH_PASSWORD:-}
+
+      # ── Search ───────────────────────────────────────
+      RESULTS_PER_PAGE: ${RESULTS_PER_PAGE:-25}
+      MAX_RESULTS: ${MAX_RESULTS:-100}
+
+      # ── Logging ──────────────────────────────────────
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      LOG_FORMAT: ${LOG_FORMAT:-short}
+
+      # ── Misc ─────────────────────────────────────────
+      NODE_ENV: production
+      TZ: ${TZ:-UTC}
+
+    networks:
+      - searchboxarr_net
+
+    # Uncomment to join an existing *arr network:
+    # networks:
+    #   - arr_network
+    #   - searchboxarr_net
+
+    labels:
+      - "com.searchboxarr.app=searchboxarr"
+
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9797/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+networks:
+  searchboxarr_net:
+    name: searchboxarr_net
+    driver: bridge
+
+  # Uncomment and set external: true to join your existing *arr network
+  # arr_network:
+  #   external: true
+  #   name: arr_network
