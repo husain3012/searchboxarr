@@ -27,13 +27,14 @@ jobs:
         run: npm install
       - name: Release
         id: semantic
-        uses: cycjimmy/semantic-release-action@v4 # Use the action instead of npx
+        uses: cycjimmy/semantic-release-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   docker:
     runs-on: ubuntu-latest
     needs: release
+    if: success() # Runs only if the release job didn't crash
 
     steps:
       - name: Checkout
