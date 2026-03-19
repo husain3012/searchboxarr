@@ -1,3 +1,9 @@
+## [1.2.2](https://github.com/husain3012/searchboxarr/compare/v1.2.1...v1.2.2) (2026-03-19)
+
+### Bug Fixes
+
+- **backend:** create default config if config is absent ([#7](https://github.com/husain3012/searchboxarr/issues/7)) ([2e41350](https://github.com/husain3012/searchboxarr/commit/2e41350a1309aa10559ec8326d3c5a50ee1b5471))
+
 # [1.2.0](https://github.com/husain3012/searchboxarr/compare/v1.1.0...v1.2.0) (2026-03-19)
 
 ### Features
