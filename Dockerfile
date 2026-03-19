@@ -39,6 +39,11 @@ RUN addgroup -g 1001 searchboxarr && \
     adduser -u 1001 -G searchboxarr -s /bin/sh -D searchboxarr
 
 WORKDIR /app
+COPY defaults/config.yml ./defaults/config.yml
+
+# 2. Add the entrypoint script
+COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Copy backend build + deps
 COPY --from=backend-builder /build/backend/dist ./backend/dist
@@ -77,6 +82,10 @@ ENV NODE_ENV=production \
     TRUST_PROXY=false
 
 # Health check
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
   CMD wget -qO- http://localhost:${SEARCHARR_PORT}/api/health || exit 1
 

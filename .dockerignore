@@ -10,6 +10,5 @@ dist
 .DS_Store
 docker-compose.override.yml.example
 docs
-scripts
 README.md
 Makefile
