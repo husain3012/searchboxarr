@@ -60,29 +60,9 @@ RUN mkdir -p /config && chown 1001:1001 /config
 
 # ── Environment defaults (all overridable) ──
 ENV NODE_ENV=production \
-    SEARCHARR_PORT=9797 \
-    SEARCHARR_BASE_URL=/ \
-    PROWLARR_URL=http://prowlarr:9696 \
-    PROWLARR_API_KEY="" \
-    PROWLARR_TIMEOUT=30000 \
-    CACHE_ENABLED=true \
-    CACHE_TTL=300 \
-    CACHE_MAX_SIZE=500 \
-    CACHE_SEARCH_TTL=120 \
-    CACHE_INDEXERS_TTL=600 \
-    RATE_LIMIT_ENABLED=true \
-    RATE_LIMIT_WINDOW_MS=60000 \
-    RATE_LIMIT_MAX=60 \
-    AUTH_ENABLED=false \
-    AUTH_USERNAME=searchboxarr \
-    AUTH_PASSWORD="" \
-    RESULTS_PER_PAGE=25 \
-    MAX_RESULTS=100 \
     LOG_LEVEL=info \
     LOG_FORMAT=short \
-    CONFIG_PATH=/config/config.yml \
-    TRUST_PROXY=false
-
+    CONFIG_PATH=/config/config.yml
     
     ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
     
