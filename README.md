@@ -61,7 +61,7 @@ services:
       - PROWLARR_URL=http://prowlarr:9696
       - PROWLARR_API_KEY=your_api_key_here
     volumes:
-      - /path/to/searchboxarr/data:/config
+      - ./config:/config
     ports:
       - 9797:9797
     restart: unless-stopped
@@ -250,7 +250,7 @@ docker run -d \
   -e PROWLARR_URL=http://prowlarr:9696 \
   -e PROWLARR_API_KEY=your_api_key_here \
   -p 9797:9797 \
-  -v /path/to/searchboxarr/data:/config \
+  -v ./config:/config \
   --restart unless-stopped \
   husain3012/searchboxarr:latest
 ```

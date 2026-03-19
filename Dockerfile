@@ -3,7 +3,7 @@
 # ╚═══════════════════════════════════════════════════════╝
 
 # ── Stage 1: Build frontend ──────────────────────────────
-FROM node:20-alpine AS frontend-builder
+FROM node:22-alpine AS frontend-builder
 
 WORKDIR /build/frontend
 
@@ -14,7 +14,7 @@ COPY frontend/ ./
 RUN npm run build
 
 # ── Stage 2: Build backend ────────────────────────────────
-FROM node:20-alpine AS backend-builder
+FROM node:22-alpine AS backend-builder
 
 WORKDIR /build/backend
 
@@ -25,7 +25,7 @@ COPY backend/ ./
 RUN npm run build
 
 # ── Stage 3: Production image ─────────────────────────────
-FROM node:20-alpine AS production
+FROM node:22-alpine AS production
 
 # Labels following OCI spec + Linuxserver conventions
 LABEL org.opencontainers.image.title="Searchboxarr" \
